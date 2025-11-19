@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sica-postgres
+    environment:
+      POSTGRES_DB: sica_db
+      POSTGRES_USER: sica_user
+      POSTGRES_PASSWORD: sica_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sica-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: sica-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - sica-network
+
+  app:
+    build: .
+    container_name: sica-backend
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: sica_db
+      DB_USERNAME: sica_user
+      DB_PASSWORD: sica_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "8080:8080"
+    networks:
+      - sica-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  sica-network:
+    driver: bridge
