@@ -8,6 +8,7 @@ Backend desarrollado con Spring Boot 3.5.7, Java 21, PostgreSQL y Redis para el 
 - **Spring Boot**: 3.5.7
 - **Build Tool**: Gradle (Kotlin DSL)
 - **Base de Datos**: PostgreSQL
+- **Migraciones**: Flyway
 - **Cache**: Redis
 - **Seguridad**: Spring Security + JWT
 - **ORM**: JPA/Hibernate
@@ -38,6 +39,8 @@ CREATE DATABASE sica_db;
 CREATE USER sica_user WITH ENCRYPTED PASSWORD 'sica_password';
 GRANT ALL PRIVILEGES ON DATABASE sica_db TO sica_user;
 ```
+
+**Nota**: Las tablas se crearán automáticamente mediante Flyway al iniciar la aplicación por primera vez. No es necesario ejecutar scripts SQL manualmente.
 
 ### 3. Configurar Redis
 
@@ -212,6 +215,70 @@ El sistema utiliza Redis para cachear:
 - **subjects**: Materias (TTL: 15 min)
 - **attendances**: Asistencias (TTL: 5 min)
 - **justifications**: Justificantes (TTL: 5 min)
+
+## 🔄 Migraciones con Flyway
+
+El proyecto utiliza **Flyway** para gestionar las migraciones de base de datos de forma automática y versionada.
+
+### Características
+
+- **Migraciones automáticas**: Al iniciar la aplicación, Flyway ejecuta automáticamente las migraciones pendientes
+- **Versionado**: Cada migración tiene un número de versión (V1, V2, V3, etc.)
+- **Historial**: Flyway mantiene un registro de todas las migraciones ejecutadas en la tabla `flyway_schema_history`
+- **Validación**: Verifica que las migraciones no hayan sido modificadas después de ejecutarse
+
+### Estructura de Migraciones
+
+Las migraciones se encuentran en: `src/main/resources/db/migration/`
+
+```
+db/migration/
+├── V1__Create_base_tables.sql           # Áreas, Divisiones, Carreras
+├── V2__Create_person_tables.sql         # Personas, Estudiantes, Empleados
+├── V3__Create_user_tables.sql           # Usuarios
+├── V4__Create_subject_tables.sql        # Materias e Inscripciones
+├── V5__Create_attendance_tables.sql     # Asistencias y Justificantes
+├── V6__Create_access_tables.sql         # Registros de Acceso y Visitas
+└── V7__Insert_initial_data.sql          # Datos iniciales de prueba
+```
+
+### Datos Iniciales
+
+La migración `V7__Insert_initial_data.sql` crea usuarios de prueba:
+
+- **Administrador**: `admin` / `admin123`
+- **Profesores**: `maria.rodriguez` / `prof123`, `carlos.martinez` / `prof123`
+- **Estudiantes**: `ana.gonzalez` / `est123`, `luis.ramirez` / `est123`, `carmen.lopez` / `est123`
+
+### Comandos Útiles
+
+```bash
+# Ver estado de las migraciones
+./gradlew flywayInfo
+
+# Validar migraciones
+./gradlew flywayValidate
+
+# Reparar checksums (usar con cuidado)
+./gradlew flywayRepair
+
+# Ver historial de migraciones (en PostgreSQL)
+psql -U sica_user -d sica_db -c "SELECT * FROM flyway_schema_history;"
+```
+
+### Crear Nueva Migración
+
+Para crear una nueva migración:
+
+1. Crear archivo en `src/main/resources/db/migration/`
+2. Nombrar como: `V{VERSION}__{DESCRIPCION}.sql` (ej: `V8__Add_email_verification.sql`)
+3. Escribir el SQL de la migración
+4. Al reiniciar la aplicación, Flyway ejecutará automáticamente la nueva migración
+
+**Importante**:
+- Nunca modificar migraciones que ya se ejecutaron
+- Siempre crear nuevas migraciones para cambios adicionales
+- El número de versión debe ser consecutivo
 
 ## 📤 Subida de Archivos
 

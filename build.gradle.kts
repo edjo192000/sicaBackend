@@ -41,6 +41,8 @@ dependencies {
 
     // Database
     runtimeOnly("org.postgresql:postgresql")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
 
     // Redis
     implementation("redis.clients:jedis:5.1.0")
