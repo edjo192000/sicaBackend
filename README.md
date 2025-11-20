@@ -4,7 +4,7 @@ Backend desarrollado con Spring Boot 3.5.7, Java 21, PostgreSQL y Redis para el 
 
 ## 🚀 Tecnologías
 
-- **Java**: 21
+- **Java**: 21 (con Records, Switch Expressions, Streams)
 - **Spring Boot**: 3.5.7
 - **Build Tool**: Gradle (Kotlin DSL)
 - **Base de Datos**: PostgreSQL
@@ -13,6 +13,7 @@ Backend desarrollado con Spring Boot 3.5.7, Java 21, PostgreSQL y Redis para el 
 - **Seguridad**: Spring Security + JWT
 - **ORM**: JPA/Hibernate
 - **Generación QR**: ZXing
+- **Lombok**: Para reducir boilerplate (@Data, @Builder, @RequiredArgsConstructor)
 
 ## 📋 Requisitos Previos
 
@@ -104,49 +105,59 @@ La aplicación estará disponible en: `http://localhost:8080/api`
 ## 📁 Estructura del Proyecto
 
 ```
-src/main/kotlin/com/sica/backend/
+src/main/java/com/sica/backend/
 ├── config/                 # Configuraciones (Security, Redis, CORS)
-│   ├── SecurityConfig.kt
-│   ├── RedisConfig.kt
-│   └── CorsConfig.kt
+│   ├── SecurityConfig.java
+│   ├── RedisConfig.java
+│   └── CorsConfig.java
 ├── controller/             # Controladores REST
-│   ├── AuthController.kt
-│   └── FileUploadController.kt
-├── dto/                    # Data Transfer Objects
-│   ├── AuthRequest.kt
-│   ├── AuthResponse.kt
+│   ├── AuthController.java
+│   └── FileUploadController.java
+├── dto/                    # Data Transfer Objects (Java 21 Records)
+│   ├── AuthRequest.java
+│   ├── AuthResponse.java
+│   ├── AttendanceRequest.java
+│   ├── JustificationRequest.java
 │   └── ...
-├── entity/                 # Entidades JPA
-│   ├── User.kt
-│   ├── Person.kt
-│   ├── Student.kt
-│   ├── Employee.kt
-│   ├── Subject.kt
-│   ├── Attendance.kt
-│   ├── Justification.kt
-│   ├── Visit.kt
-│   └── AccessRecord.kt
+├── entity/                 # Entidades JPA (con Lombok)
+│   ├── User.java
+│   ├── Person.java
+│   ├── Student.java
+│   ├── Employee.java
+│   ├── Subject.java
+│   ├── Attendance.java
+│   ├── Justification.java
+│   ├── Visit.java
+│   └── AccessRecord.java
 ├── exception/              # Excepciones personalizadas
-│   ├── ResourceNotFoundException.kt
-│   ├── BadRequestException.kt
-│   ├── UnauthorizedException.kt
-│   └── GlobalExceptionHandler.kt
+│   ├── ResourceNotFoundException.java
+│   ├── BadRequestException.java
+│   ├── UnauthorizedException.java
+│   └── GlobalExceptionHandler.java
 ├── repository/             # Repositorios JPA
-│   ├── UserRepository.kt
-│   ├── PersonRepository.kt
+│   ├── UserRepository.java
+│   ├── PersonRepository.java
 │   └── ...
 ├── security/               # Seguridad y JWT
-│   ├── JwtTokenProvider.kt
-│   ├── JwtAuthenticationFilter.kt
-│   ├── UserPrincipal.kt
-│   └── CustomUserDetailsService.kt
+│   ├── JwtTokenProvider.java
+│   ├── JwtAuthenticationFilter.java
+│   ├── UserPrincipal.java
+│   └── CustomUserDetailsService.java
 ├── service/                # Servicios de negocio
-│   └── AuthService.kt
+│   └── AuthService.java
 ├── util/                   # Utilidades
-│   ├── QRCodeGenerator.kt
-│   └── FileStorageService.kt
-└── SicaBackendApplication.kt
+│   ├── QRCodeGenerator.java
+│   └── FileStorageService.java
+└── SicaBackendApplication.java
 ```
+
+### Características de Java 21 Utilizadas
+
+- **Records**: DTOs inmutables y concisos
+- **Switch Expressions**: Lógica más limpia en AuthService
+- **Streams API**: Procesamiento funcional de colecciones
+- **Pattern Matching**: Para instanceof más elegante
+- **Text Blocks**: SQL queries y JSON más legibles (donde aplique)
 
 ## 🔐 Autenticación
 
