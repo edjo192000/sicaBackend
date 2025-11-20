@@ -1,18 +1,24 @@
 package com.sica.backend.security;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sica.backend.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-public class UserPrincipal implements UserDetails {
+public class UserPrincipal implements UserDetails, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String id;
     private String username;
@@ -50,22 +56,25 @@ public class UserPrincipal implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return enabled != null && enabled;
     }
 }
