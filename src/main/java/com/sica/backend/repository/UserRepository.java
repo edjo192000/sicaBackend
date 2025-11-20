@@ -1,0 +1,17 @@
+package com.sica.backend.repository;
+
+import com.sica.backend.entity.Role;
+import com.sica.backend.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, String> {
+    Optional<User> findByUsername(String username);
+    List<User> findByRole(Role role);
+    List<User> findByActiveTrue();
+    Boolean existsByUsername(String username);
+}
