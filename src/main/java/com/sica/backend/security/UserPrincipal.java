@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -23,26 +25,30 @@ public class UserPrincipal implements UserDetails, Serializable {
     private String id;
     private String username;
     private String password;
-    private Collection<? extends GrantedAuthority> authorities;
+    private List<String> roles; // Cambiado a List<String> para serialización
     private Boolean enabled;
 
     public static UserPrincipal create(User user) {
-        Collection<GrantedAuthority> authorities = Collections.singletonList(
-                new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
-        );
+        List<String> roles = Collections.singletonList("ROLE_" + user.getRole().name());
 
         return new UserPrincipal(
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                authorities,
+                roles,
                 user.getActive()
         );
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        if (roles == null || roles.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 
     @Override
